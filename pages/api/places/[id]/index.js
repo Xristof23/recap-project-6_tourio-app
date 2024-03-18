@@ -1,17 +1,22 @@
-import { places } from "../../../../lib/db.js";
+import dbConnect from "@/db/connect";
+import Place from "@/db/models/Place";
 
-export default function handler(request, response) {
+export default async function handler(request, response) {
   const { id } = request.query;
-
-  if (!id) {
-    return;
+  await dbConnect();
+  if (request.method === "GET") {
+    const place = await Place.findById(id);
+    return response.status(200).json(place);
   }
-
-  const place = places.find((place) => place.id === id);
-
-  if (!place) {
-    return response.status(404).json({ status: "Not found" });
+  if (request.method === "PATCH") {
+    const updatedPlace = request.body;
+    await Place.findByIdAndUpdate(id, updatedPlace);
+    return response.status(200).json({ status: "Place successfully updated." });
   }
-
-  response.status(200).json(place);
+  if (request.method === "DELETE") {
+    await Place.findByIdAndDelete(id);
+    return response.status(200).json({ status: "Place successfully deleted." });
+  } else {
+    return response.status(405).json({ message: "Method not allowed" });
+  }
 }
