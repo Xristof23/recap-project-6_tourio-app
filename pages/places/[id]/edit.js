@@ -8,10 +8,10 @@ export default function EditPage() {
   const router = useRouter();
   const { isReady } = router;
   const { id } = router.query;
-  const { data: place, isLoading, error } = useSWR(`/api/places/${id}`);
+  const { data: place, isLoading, error, mutate } = useSWR(`/api/places/${id}`);
 
   async function editPlace(place) {
-    const response = await fetch("/api/places", {
+    const response = await fetch(`/api/places/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export default function EditPage() {
     });
     console.log("Place edited (but not really...");
     if (response.ok) {
-      // mutate();
+      mutate();
       router.push(`/places/${id}`);
     }
   }
