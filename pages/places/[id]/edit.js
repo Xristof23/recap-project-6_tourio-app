@@ -18,7 +18,6 @@ export default function EditPage() {
       },
       body: JSON.stringify(place),
     });
-    console.log("Place edited (but not really...");
     if (response.ok) {
       mutate();
       router.push(`/places/${id}`);
